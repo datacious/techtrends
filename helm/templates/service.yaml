@@ -1,0 +1,36 @@
+# service:
+# port: 4111
+# targetPort: 3111
+# protocol: TCP
+# type: ClusterIP
+# image:
+# repository: techtrends
+# tag: latest
+# pullPolicy: IfNotPresent
+# replicaCount: 1
+# resources:
+# requests: memory 64Mi and CPU 250m
+# limits: memory 128Mi and CPU 500m
+# containerPort: 3111
+# livenessProbe path: /healthz check on containerPort
+# readinessProbe path: /healthz check on containerPort
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: techtrends
+  name: techtrends
+  namespace: {{ .Values.namespace.name }}
+spec:
+  ports:
+  - port: {{ .Values.service.port }}
+    protocol: TCP
+    targetPort: {{ if .Values.service.targetPort }}
+                  {{ .Values.service.targetPort }} 
+                {{ else  }} 
+                  {{ .Values.service.port }} 
+                {{ end }}
+  selector:
+    app: techtrends
+  type: {{ .Values.service.type }}
